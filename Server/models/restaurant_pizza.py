@@ -1,11 +1,8 @@
-from . import db, SerializerMixin
-from sqlalchemy.orm import validates
+from . import db
 
-class RestaurantPizza(db.Model, SerializerMixin):
+class RestaurantPizza(db.Model):
     __tablename__ = 'restaurant_pizzas'
-    
-    serialize_rules = ('-restaurant.restaurant_pizzas', '-pizza.restaurant_pizzas')
-    
+
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Integer, nullable=False)
     
@@ -14,12 +11,14 @@ class RestaurantPizza(db.Model, SerializerMixin):
     
     restaurant = db.relationship('Restaurant', back_populates='restaurant_pizzas')
     pizza = db.relationship('Pizza', back_populates='restaurant_pizzas')
-    
-    @validates('price')
-    def validate_price(self, key, price):
-        if not isinstance(price, int) or not (1 <= price <= 30):
-            raise ValueError("Price must be an integer between 1 and 30")
-        return price
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'price': self.price,
+            'restaurant_id': self.restaurant_id,
+            'pizza_id': self.pizza_id
+        }
     
     def __repr__(self):
         return f'<RestaurantPizza Price: {self.price}>'

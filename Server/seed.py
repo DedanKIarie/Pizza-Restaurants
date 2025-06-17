@@ -1,26 +1,24 @@
-# server/seed.py
+# To run this seed file, run `python -m Server.seed` from the root directory.
 
-# Import the app factory and the db instance
-from app import create_app
+from .app import create_app
+# Import db from the models package, and each model from its specific file
 from .models import db
-
-
-from .models.Restaurant import Restaurant
-from .models.Pizza import Pizza
-from .models.RestaurantPizza import RestaurantPizza
-
+from .models.restaurant import Restaurant
+from .models.pizza import Pizza
+from .models.restaurant_pizza import RestaurantPizza
 
 app = create_app()
 
 def seed_database():
-
     with app.app_context():
         print("Clearing database...")
+        # Use the class names for queries
         RestaurantPizza.query.delete()
         Restaurant.query.delete()
         Pizza.query.delete()
 
         print("Seeding restaurants...")
+        # Use the class names to create instances
         restaurants = [
             Restaurant(name="Sottocasa NYC", address="298 Atlantic Ave, Brooklyn, NY 11201"),
             Restaurant(name="Pizzana", address="11712 San Vicente Blvd, Los Angeles, CA 90049"),
@@ -53,7 +51,6 @@ def seed_database():
         db.session.commit()
         
         print("Seeding complete!")
-
 
 if __name__ == '__main__':
     seed_database()
